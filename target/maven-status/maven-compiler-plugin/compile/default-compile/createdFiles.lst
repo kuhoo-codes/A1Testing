@@ -1,0 +1,12 @@
+AccountDAOFake.class
+AccountDAO.class
+UserNotFoundException.class
+UserExistsException.class
+ISocialNetwork.class
+IAccountDAO.class
+Account.class
+DAOFactory.class
+App.class
+NoUserLoggedInException.class
+SocialNetwork$MyAccount.class
+SocialNetwork.class

@@ -1,0 +1,41 @@
+-------------------------------------------------------------------------------
+Test set: TestSNWithFakeDAO
+-------------------------------------------------------------------------------
+Tests run: 17, Failures: 1, Errors: 11, Skipped: 0, Time elapsed: 0.012 s <<< FAILURE! - in TestSNWithFakeDAO
+TestSNWithFakeDAO.nonPersistedAccountCanCauseThisTestToFailButItShouldNot  Time elapsed: 0.003 s  <<< ERROR!
+java.lang.Exception: Unexpected exception, expected<UserExistsException> but was<java.lang.AssertionError>
+	at TestSNWithFakeDAO.nonPersistedAccountCanCauseThisTestToFailButItShouldNot(TestSNWithFakeDAO.java:33)
+
+TestSNWithFakeDAO.acceptingFriendRequestCreatesFriendship  Time elapsed: 0 s  <<< ERROR!
+UserNotFoundException
+
+TestSNWithFakeDAO.canNotJoinSocialNetworkAgain  Time elapsed: 0 s  <<< FAILURE!
+java.lang.AssertionError: Expected exception: UserExistsException
+
+TestSNWithFakeDAO.sendingFriendRequestCreatesPendingRequestAndResponse  Time elapsed: 0 s  <<< ERROR!
+UserNotFoundException
+
+TestSNWithFakeDAO.canListMembers  Time elapsed: 0.001 s  <<< ERROR!
+UserNotFoundException
+
+TestSNWithFakeDAO.blockingAMemberMakesUserInvisibleToHerInListMembers  Time elapsed: 0 s  <<< ERROR!
+UserNotFoundException
+
+TestSNWithFakeDAO.rejectingFriendRequestClearsPendingRequestAndResponse  Time elapsed: 0 s  <<< ERROR!
+UserNotFoundException
+
+TestSNWithFakeDAO.blockingAMemberMakesUserInvisibleToHerInHasMember  Time elapsed: 0 s  <<< ERROR!
+UserNotFoundException
+
+TestSNWithFakeDAO.canLoginAndFindYourself  Time elapsed: 0 s  <<< ERROR!
+UserNotFoundException
+
+TestSNWithFakeDAO.recommendMembersReturnsSharedFriendsOfMyFriends  Time elapsed: 0 s  <<< ERROR!
+UserNotFoundException
+
+TestSNWithFakeDAO.canLeaveSocialNetwork  Time elapsed: 0.001 s  <<< ERROR!
+UserNotFoundException
+
+TestSNWithFakeDAO.canLoginAndFindOthers  Time elapsed: 0 s  <<< ERROR!
+UserNotFoundException
+

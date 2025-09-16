@@ -1,0 +1,61 @@
+-------------------------------------------------------------------------------
+Test set: TestSNWithSpyDAO
+-------------------------------------------------------------------------------
+Tests run: 22, Failures: 7, Errors: 10, Skipped: 0, Time elapsed: 0 s <<< FAILURE! - in TestSNWithSpyDAO
+TestSNWithSpyDAO.willAttemptToPersistANewAccount  Time elapsed: 0 s  <<< FAILURE!
+java.lang.AssertionError
+	at TestSNWithSpyDAO.willAttemptToPersistANewAccount(TestSNWithSpyDAO.java:36)
+
+TestSNWithSpyDAO.willAttemptToPersistRejectionOfFriendRequest  Time elapsed: 0 s  <<< FAILURE!
+java.lang.AssertionError
+	at TestSNWithSpyDAO.willAttemptToPersistRejectionOfFriendRequest(TestSNWithSpyDAO.java:52)
+
+TestSNWithSpyDAO.willAttemptToPersistSendingAFriendRequest  Time elapsed: 0 s  <<< FAILURE!
+java.lang.AssertionError
+	at TestSNWithSpyDAO.willAttemptToPersistSendingAFriendRequest(TestSNWithSpyDAO.java:42)
+
+TestSNWithSpyDAO.willAttemptToPersistBlockingAMember  Time elapsed: 0 s  <<< FAILURE!
+java.lang.AssertionError
+	at TestSNWithSpyDAO.willAttemptToPersistBlockingAMember(TestSNWithSpyDAO.java:57)
+
+TestSNWithSpyDAO.willAttemptToPersistLeavingSocialNetwork  Time elapsed: 0 s  <<< FAILURE!
+java.lang.AssertionError
+	at TestSNWithSpyDAO.willAttemptToPersistLeavingSocialNetwork(TestSNWithSpyDAO.java:63)
+
+TestSNWithSpyDAO.willAttemptToPersistAcceptanceOfFriendRequest  Time elapsed: 0 s  <<< FAILURE!
+java.lang.AssertionError
+	at TestSNWithSpyDAO.willAttemptToPersistAcceptanceOfFriendRequest(TestSNWithSpyDAO.java:47)
+
+TestSNWithSpyDAO.acceptingFriendRequestCreatesFriendship  Time elapsed: 0 s  <<< ERROR!
+UserNotFoundException
+
+TestSNWithSpyDAO.canNotJoinSocialNetworkAgain  Time elapsed: 0 s  <<< FAILURE!
+java.lang.AssertionError: Expected exception: UserExistsException
+
+TestSNWithSpyDAO.sendingFriendRequestCreatesPendingRequestAndResponse  Time elapsed: 0 s  <<< ERROR!
+UserNotFoundException
+
+TestSNWithSpyDAO.canListMembers  Time elapsed: 0 s  <<< ERROR!
+UserNotFoundException
+
+TestSNWithSpyDAO.blockingAMemberMakesUserInvisibleToHerInListMembers  Time elapsed: 0 s  <<< ERROR!
+UserNotFoundException
+
+TestSNWithSpyDAO.rejectingFriendRequestClearsPendingRequestAndResponse  Time elapsed: 0 s  <<< ERROR!
+UserNotFoundException
+
+TestSNWithSpyDAO.blockingAMemberMakesUserInvisibleToHerInHasMember  Time elapsed: 0 s  <<< ERROR!
+UserNotFoundException
+
+TestSNWithSpyDAO.canLoginAndFindYourself  Time elapsed: 0 s  <<< ERROR!
+UserNotFoundException
+
+TestSNWithSpyDAO.recommendMembersReturnsSharedFriendsOfMyFriends  Time elapsed: 0 s  <<< ERROR!
+UserNotFoundException
+
+TestSNWithSpyDAO.canLeaveSocialNetwork  Time elapsed: 0 s  <<< ERROR!
+UserNotFoundException
+
+TestSNWithSpyDAO.canLoginAndFindOthers  Time elapsed: 0 s  <<< ERROR!
+UserNotFoundException
+

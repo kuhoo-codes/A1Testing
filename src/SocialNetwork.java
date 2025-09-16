@@ -7,10 +7,11 @@ import java.util.Set;
 public class SocialNetwork implements ISocialNetwork {
 	
 	private Account currentUser = null;
-	private IAccountDAO accountDAO = DAOFactory.getInstance().getAccountDAO();
+	private IAccountDAO accountDAO;
 	
-	public SocialNetwork() {
-	}
+	public SocialNetwork(IAccountDAO accountDAO) {
+		this.accountDAO = accountDAO;
+    }
 
 	private class MyAccount extends Account {
 		
@@ -70,6 +71,8 @@ public class SocialNetwork implements ISocialNetwork {
 		Account toMember = accountDAO.findByUserName(userName);
 		if (toMember == null) throw new UserNotFoundException(userName);
 		toMember.requestFriendship(currentUser);
+		//CHANGE: must update toMember as well (missing before)
+		accountDAO.update(toMember);  
 		accountDAO.update(currentUser); 
 	}
 
@@ -80,7 +83,8 @@ public class SocialNetwork implements ISocialNetwork {
 			friend.cancelFriendship(currentUser);
 			accountDAO.update(friend);
 		}
-		accountDAO.update(currentUser);
+		//CHANGE: delete not update (incorrect)
+		accountDAO.delete(currentUser);
 		currentUser = null;
 	}
 	
@@ -170,7 +174,10 @@ public class SocialNetwork implements ISocialNetwork {
 			if (friend == null ) throw new UserNotFoundException(each);
 			for (String friendOfFriend: friend.getFriends()) {
 				if (seen.contains(friendOfFriend)) {
-					//if (!currentUser.getFriends().contains(friendOfFriend) && !currentUser.blockedMembers().contains(friendOfFriend))
+					// CHANGE: must check that this is not currentUser, not already a friend, and not blocked (commented out and missing before)
+					if (!friendOfFriend.equals(currentUser.getUserName()) &&
+					  !currentUser.getFriends().contains(friendOfFriend) && 
+					  !currentUser.blockedMembers().contains(friendOfFriend))
 						recommendations.add(friendOfFriend);
 				} 
 				else { // should we do something special about currentUser? 

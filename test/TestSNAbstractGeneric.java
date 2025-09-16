@@ -1,6 +1,8 @@
+import org.junit.Test;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.fail;
+import static org.mockito.Mockito.mock;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertEquals;
 
@@ -15,7 +17,7 @@ import org.junit.Test;
 public abstract class TestSNAbstractGeneric {
 	
 	protected IAccountDAO accountDAO; 
-	protected SocialNetwork sn = new SocialNetwork();
+	protected SocialNetwork sn;
 	protected Account m1, m2, m3, m4, m5;
 	protected Set<Account> all = new HashSet<Account>();
 
@@ -27,7 +29,6 @@ public abstract class TestSNAbstractGeneric {
 		m4 = sn.join("Dean");
 		m5 = sn.join("Hasan");
 		// ... other test accounts/members you need to create for all tests should go here ... 
-		
 		/* you can set expectation for mock objects here or in the tests
 		 * when injected DAO double is a mock, like this...
 		 */
@@ -172,18 +173,18 @@ public abstract class TestSNAbstractGeneric {
 	@Test
 	public void recommendMembersReturnsSharedFriendsOfMyFriends()
 			throws UserNotFoundException, NoUserLoggedInException {
-		sn.login(m1);
-		sn.sendFriendshipTo(m2.getUserName());
-		sn.sendFriendshipTo(m3.getUserName());
-		sn.login(m2);
-		sn.acceptFriendshipFrom(m1.getUserName());
-		sn.sendFriendshipTo(m4.getUserName());
-		sn.login(m3);
-		sn.acceptFriendshipFrom(m1.getUserName());
-		sn.sendFriendshipTo(m4.getUserName());
-		sn.login(m4);
-		sn.acceptFriendshipFrom(m2.getUserName());
-		sn.acceptFriendshipFrom(m3.getUserName());
+		sn.login(m1); //friends with m2, m3
+		sn.sendFriendshipTo(m2.getUserName()); //m1->m2
+		sn.sendFriendshipTo(m3.getUserName()); //m1->m3
+		sn.login(m2); //friends with m1, m4
+		sn.acceptFriendshipFrom(m1.getUserName()); //m2 m1 friends
+		sn.sendFriendshipTo(m4.getUserName()); //m2->m4
+		sn.login(m3); //friends with m1, m4
+		sn.acceptFriendshipFrom(m1.getUserName()); //m3 m1 friends
+		sn.sendFriendshipTo(m4.getUserName());	//m3->m4
+		sn.login(m4); //friends with m2, m3
+		sn.acceptFriendshipFrom(m2.getUserName()); //m4 m2 friends
+		sn.acceptFriendshipFrom(m3.getUserName()); //m4 m3 friends
 		sn.login(m1);
 		Set<String> recommendations = sn.recommendFriends();
 		assertTrue(recommendations.contains(m4.getUserName()));

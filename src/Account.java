@@ -68,7 +68,8 @@ public class Account implements Cloneable {
 
 	// request friendship from this account owner (unless blocked)
 	public void requestFriendship(Account fromMember) {
-		if (this.blocked.contains(fromMember)) return;
+		//CHANGE: compare username, not object
+		if (this.blocked.contains(fromMember.getUserName())) return;
 		incomingRequests.add(fromMember.getUserName());
 		fromMember.getOutgoingRequests().add(this.getUserName());
 		if (autoAccept) {

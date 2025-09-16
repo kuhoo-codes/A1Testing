@@ -11,10 +11,14 @@ import static org.mockito.Mockito.*;
 
 
 public class TestSNWithMockDAO extends TestSNAbstractGeneric {
+
+	private IAccountDAO mockDAO;
 	
 	@Override @Before
 	public void setUp() throws Exception {
 		// whatever you need to do here
+		mockDAO = mock(IAccountDAO.class);
+		sn = new SocialNetwork(mockDAO);
 		super.setUp();
 	}
 	
@@ -34,13 +38,20 @@ public class TestSNWithMockDAO extends TestSNAbstractGeneric {
 	
 	@Test public void willAttemptToPersistANewAccount() throws UserExistsException {
 		// make sure that when a new member account is created, it will be persisted 
-		fail();
+		Account newAccount = sn.join("A new Member");
+		verify(mockDAO).save(newAccount);
 	}
 	
 	@Test public void willAttemptToPersistSendingAFriendRequest() 
         throws UserNotFoundException, UserExistsException, NoUserLoggedInException {
 		// make sure that when a logged-in member issues a friend request, any changes to the affected accounts will be persisted
-		fail();	}
+		when(mockDAO.findByUserName(m1.getUserName())).thenReturn(m1);
+		when(mockDAO.findByUserName(m2.getUserName())).thenReturn(m2);
+		sn.login(m1);
+		sn.sendFriendshipTo(m2.getUserName());
+		verify(mockDAO).update(m1);
+		verify(mockDAO).update(m2);
+	}
 	
 	@Test public void willAttemptToPersistAcceptanceOfFriendRequest() 
         throws UserNotFoundException, UserExistsException, NoUserLoggedInException {

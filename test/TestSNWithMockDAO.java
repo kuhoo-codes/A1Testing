@@ -16,6 +16,7 @@ public class TestSNWithMockDAO extends TestSNAbstractGeneric {
 	public void setUp() throws Exception {
 		// whatever you need to do here
 		mockDAO = mock(IAccountDAO.class);
+		this.accountDAO = mockDAO;
 		sn = new SocialNetwork(mockDAO);
 		super.setUp();
 	}

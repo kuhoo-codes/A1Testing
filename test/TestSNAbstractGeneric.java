@@ -3,6 +3,7 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.fail;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertEquals;
 
@@ -32,14 +33,16 @@ public abstract class TestSNAbstractGeneric {
 		/* you can set expectation for mock objects here or in the tests
 		 * when injected DAO double is a mock, like this...
 		 */
-		
-		/* if (DAOFactory.isMock(... injected IAccountDAO here...)) {
-			//
-			// accountDAO is a Mockito mock object, so you may set expectations
-			// with when-then clauses, etc. 
-			//
-		*/
+		all.add(m1); all.add(m2); all.add(m3); all.add(m4); all.add(m5);
+		if (DAOFactory.isMock(accountDAO)) {
+			when(accountDAO.findByUserName(m1.getUserName())).thenReturn(m1);
+			when(accountDAO.findByUserName(m2.getUserName())).thenReturn(m2);
+			when(accountDAO.findByUserName(m3.getUserName())).thenReturn(m3);
+			when(accountDAO.findByUserName(m4.getUserName())).thenReturn(m4);
+			when(accountDAO.findByUserName(m5.getUserName())).thenReturn(m5);
+			when(accountDAO.findAll()).thenReturn(all);
 		}
+	}
 
 	@After
 	public void tearDown() throws Exception {
@@ -199,6 +202,9 @@ public abstract class TestSNAbstractGeneric {
 		sn.login(m2);
 		sn.leave();
 		// might have to do additional checking if using a Mockito mock
+		if (DAOFactory.isMock(accountDAO)) {
+			when(accountDAO.findByUserName(m2.getUserName())).thenReturn(null);
+		}
 		sn.login(m3);
 		assertFalse(sn.hasMember(m2.getUserName()));
 	}

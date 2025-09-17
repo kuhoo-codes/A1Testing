@@ -1,0 +1,44 @@
+ASSIGNMENT REPORT - TEST DOUBLES
+
+Name: Kuhoo Sharma, Shannon Yang
+Andrew ID: kuhoos, snyang
+
+Focus your report on assignment goals
+
+1. Why were test doubles necessary in this assignment? 
+ - We needed to separate SocialNetwork logic from the persistence layer (DAO). 
+ - Using doubles let us run and isolate tests without a real database and made it easy to simulate edge cases 
+   like missing users or forced accept or reject flows.
+ - Doubles kept the tests fast and predictable.
+ - Fakes helped us validate final state, while mocks and spies let us watch which DAO methods were actually called.
+
+
+2. What were the advantages and disadvantages of the different kinds of test doubles
+you used? What differences did you observe in their behavior and their ability to reveal faults?
+ - Fake (AccountDAOFake) 
+   – Behaves like real storage and is good for full end-to-end state checks.
+   - It catches integration and state bugs such as missed updates or deletes.
+
+ - Mock(mockDAO) 
+    – This only checks that the right DAO calls happen.
+    - This was good for spotting missing or extra accountDAO.update calls.
+
+ - Spy(spyDAO) 
+    - Keeps real behavior but records interactions.
+    - It was a good mix to catch both logic and persistence issues.
+    - This took a a little more setup and can overlook higher-level logic if we don’t assert it.
+
+3. List the faults found in the production or test code.
+ - There were a few broken ties in the production and test codes.  
+ - Account.requestFriendship compared objects instead of usernames, letting blocked users send requests.
+ - SocialNetwork.sendFriendshipTo didn’t persist the recipient after adding an incoming request.
+ - SocialNetwork.leave deleted the user but skipped updating all friends, leaving stale data.
+ - SocialNetwork.rejectFriendshipFrom didn’t update the current user after rejecting a request.
+ - SocialNetwork.block failed to update the blocked member’s record.
+ - SocialNetwork.rejectAllFriendships and acceptAllFriendships originally skipped updating both sides of each request.
+ - SocialNetwork.recommendFriends recommended the current user, existing friends, or blocked members 
+   because it lacked proper filters.
+
+
+4. Suggestions and Comments about Assignment (Optional)
+

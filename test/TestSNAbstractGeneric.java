@@ -56,7 +56,11 @@ public abstract class TestSNAbstractGeneric {
 	 * the SocialNetwork.
 	 * 
 	 */
-	
+
+	private boolean checkMutualFriendship(Account a1, Account a2) {
+		return (a1.hasFriend(a2)) && (a2.hasFriend(a1));
+	}
+
 	@Test
 	public void canJoinSocialNetwork() throws UserExistsException {
 		Account newMember = sn.join("Gloria");
@@ -273,17 +277,13 @@ public abstract class TestSNAbstractGeneric {
 			throws NoUserLoggedInException, UserNotFoundException {
 		sn.login(m1);
 		sn.autoAcceptFriendships();
-		sn.login(m2);
+		m2 = sn.login(m2);
 		sn.sendFriendshipTo(m1.getUserName());
-		sn.login(m3);
+		m3 = sn.login(m3);
 		sn.sendFriendshipTo(m1.getUserName());
 		m1 = sn.login(m1);
-		m2 = sn.login(m2);
-		m3 = sn.login(m3);
-		assertTrue(m1.hasFriend(m2));
-		assertTrue(m2.hasFriend(m1));
-		assertTrue(m1.hasFriend(m3));
-		assertTrue(m3.hasFriend(m1));
+		assertTrue(checkMutualFriendship(m1, m2));
+		assertTrue(checkMutualFriendship(m1, m3));
 	}
 
 	@Test
@@ -291,12 +291,10 @@ public abstract class TestSNAbstractGeneric {
 	    throws NoUserLoggedInException, UserNotFoundException {
 		sn.login(m1);
 		sn.autoAcceptFriendships();
-		sn.login(m2);
+		m2 = sn.login(m2);
 		sn.sendFriendshipTo(m1.getUserName());
 		m1 = sn.login(m1);
-		m2 = sn.login(m2);
-		assertTrue(m1.hasFriend(m2));
-		assertTrue(m2.hasFriend(m1));
+		assertTrue(checkMutualFriendship(m1, m2));
 		sn.login(m1);
 		sn.cancelAutoAcceptFriendships();
 		sn.login(m3);

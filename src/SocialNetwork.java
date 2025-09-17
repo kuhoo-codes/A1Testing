@@ -153,9 +153,12 @@ public class SocialNetwork implements ISocialNetwork {
 		for (String each : currentUser.getIncomingRequests()) {
 			incomingRequests.add(new String(each));
 		}
+		//CHANGE: update current user and the friends as incoming and outgoing both affected
 		for (String each : incomingRequests) {
 			accountDAO.findByUserName(each).friendshipRejected(currentUser);
+			accountDAO.update(accountDAO.findByUserName(each));
 		}
+		accountDAO.update(currentUser);
 	}
 	
 	public void acceptAllFriendships() throws NoUserLoggedInException {
@@ -165,9 +168,12 @@ public class SocialNetwork implements ISocialNetwork {
 		for (String each : currentUser.getIncomingRequests()) {
 			incomingRequests.add(new String(each));
 		}
+		//CHANGE: update current user and the friends as incoming and outgoing both affected
 		for (String each : incomingRequests) {
 			accountDAO.findByUserName(each).friendshipAccepted(currentUser);
+			accountDAO.update(accountDAO.findByUserName(each));
 		}
+		accountDAO.update(currentUser);
 	}
 
 	public Set<String> recommendFriends() throws NoUserLoggedInException, UserNotFoundException {

@@ -1,13 +1,11 @@
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.fail;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertEquals;
-
 import org.junit.Before;
 import org.junit.Test;
-
-import static org.mockito.Mockito.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 
 public class TestSNWithMockDAO extends TestSNAbstractGeneric {
@@ -55,24 +53,74 @@ public class TestSNWithMockDAO extends TestSNAbstractGeneric {
 	
 	@Test public void willAttemptToPersistAcceptanceOfFriendRequest() 
         throws UserNotFoundException, UserExistsException, NoUserLoggedInException {
-		// make sure that when a logged-in member issues a friend request, any changes to the affected accounts will be persisted
-		fail();	}
+
+		when(mockDAO.findByUserName(m1.getUserName())).thenReturn(m1);
+		when(mockDAO.findByUserName(m2.getUserName())).thenReturn(m2);
+
+		sn.login(m1);
+		sn.sendFriendshipTo(m2.getUserName());
+		sn.logout();
+		sn.login(m2);
+		sn.acceptFriendshipFrom(m1.getUserName());
+		verify(mockDAO, times(2)).update(m1);
+		verify(mockDAO, times(2)).update(m2);
+
+		verify(mockDAO, never()).delete(any(Account.class));
+		
+		}
 	
 	@Test public void willAttemptToPersistRejectionOfFriendRequest() 
         throws UserNotFoundException, UserExistsException, NoUserLoggedInException {
-		// make sure that when a logged-in member rejects a friend request, any changes to the affected accounts will be persisted
-		fail();	}
+		when(mockDAO.findByUserName(m1.getUserName())).thenReturn(m1);
+		when(mockDAO.findByUserName(m2.getUserName())).thenReturn(m2);
+
+		sn.login(m1);
+		sn.sendFriendshipTo(m2.getUserName());
+		sn.logout();
+		sn.login(m2);
+		sn.rejectFriendshipFrom(m1.getUserName());
+		verify(mockDAO, times(2)).update(m1);
+		verify(mockDAO, times(2)).update(m2);
+
+		verify(mockDAO, never()).delete(any(Account.class));
+		
+	}
 	
 	@Test public void willAttemptToPersistBlockingAMember() 
         throws UserNotFoundException, UserExistsException, NoUserLoggedInException {
-		// make sure that when a logged-in member blocks another member, any changes to the affected accounts will be persisted
-		fail();	}
+		
+		when(mockDAO.findByUserName(m1.getUserName())).thenReturn(m1);
+		when(mockDAO.findByUserName(m2.getUserName())).thenReturn(m2);
+
+		sn.login(m1);
+		sn.block(m2.getUserName());
+		verify(mockDAO, times(1)).update(m1);
+		verify(mockDAO, times(1)).update(m2);
+
+		verify(mockDAO, never()).delete(any(Account.class));
+	}
 		
 	@Test public void willAttemptToPersistLeavingSocialNetwork() 
         throws UserExistsException, UserNotFoundException, NoUserLoggedInException {
-		// make sure that when a logged-in member leaves the social network, his account will be permanenlty deleted and  
-		// any changes to the affected accounts will be persisted
-		fail();	
-	}
+		
+		when(mockDAO.findByUserName(m1.getUserName())).thenReturn(m1);
+		when(mockDAO.findByUserName(m2.getUserName())).thenReturn(m2);
+
+		sn.login(m1);
+		sn.sendFriendshipTo(m2.getUserName());
+		sn.logout();
+		sn.login(m2);
+		sn.acceptFriendshipFrom(m1.getUserName());
+		sn.leave(); // m2 leaves
+
+
+		verify(mockDAO, times(3)).update(m1);
+		verify(mockDAO, times(2)).update(m2);
+		verify(mockDAO, times(1)).delete(m2);
+
+		verify(mockDAO).delete(any(Account.class));
+
+
+		}
 
 }

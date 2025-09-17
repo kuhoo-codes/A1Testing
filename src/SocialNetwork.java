@@ -112,6 +112,8 @@ public class SocialNetwork implements ISocialNetwork {
 		if (member == null) throw new UserNotFoundException(userName);
 		member.friendshipRejected(currentUser);
 		accountDAO.update(member);
+		// CHANGE: must update currentUser as well (missing before)
+		accountDAO.update(currentUser);
 	}
 
 	public void autoAcceptFriendships() throws NoUserLoggedInException {
@@ -132,12 +134,15 @@ public class SocialNetwork implements ISocialNetwork {
 		if (member == null) throw new UserNotFoundException(userName);
 		currentUser.block(member);
 		accountDAO.update(currentUser);
+		// CHANGE: must update person being blocked as well (missing before)
+		accountDAO.update(member);
 	}
 	
 	public void unblock(String userName) throws UserNotFoundException, NoUserLoggedInException {
 		if (currentUser == null) throw new NoUserLoggedInException();
 		Account member = accountDAO.findByUserName(userName);
 		if (member == null) throw new UserNotFoundException(userName);
+		currentUser.unblock(member);
 		accountDAO.update(currentUser);	
 	}
 	

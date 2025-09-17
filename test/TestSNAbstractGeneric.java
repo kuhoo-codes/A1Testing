@@ -201,9 +201,19 @@ public abstract class TestSNAbstractGeneric {
 		// might have to do additional checking if using a Mockito mock
 		sn.login(m3);
 		assertFalse(sn.hasMember(m2.getUserName()));
-	}	
+	}
 	
-	
+	@Test
+	public void unblockingAMemberMakesUserVisibleToHerInListMembers() throws UserNotFoundException, NoUserLoggedInException {
+		sn.login(m2);
+		sn.block(m3.getUserName());
+		sn.login(m3);
+		assertFalse(sn.hasMember(m2.getUserName()));
+		sn.login(m2);
+		sn.unblock(m3.getUserName());
+		assertTrue(sn.hasMember(m2.getUserName()));
+	}
+
 	/*
 	 * The rest are auxiliary tests. 
 	 * They make sure that Account objects are cloneable and Account equality works as expected.

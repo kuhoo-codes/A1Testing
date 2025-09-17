@@ -6,6 +6,7 @@ import static org.junit.Assert.assertEquals;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.Mockito;
 
 import static org.mockito.Mockito.*;
 
@@ -55,25 +56,57 @@ public class TestSNWithSpyDAO extends TestSNAbstractGeneric {
 	}
 	
 	@Test public void willAttemptToPersistAcceptanceOfFriendRequest() 
-        throws UserNotFoundException, UserExistsException, NoUserLoggedInException {
+			throws UserNotFoundException, UserExistsException, NoUserLoggedInException {
 		// make sure that when a logged-in member issues a friend request, any changes to the affected accounts will be persisted
-		fail();	}
+		when(spyDAO.findByUserName(m1.getUserName())).thenReturn(m1);
+		when(spyDAO.findByUserName(m2.getUserName())).thenReturn(m2);
+		sn.login(m1);
+		sn.sendFriendshipTo(m2.getUserName());
+		sn.login(m2);
+		sn.acceptFriendshipFrom(m1.getUserName());
+		verify(spyDAO, times(2)).update(m1);
+		verify(spyDAO, times(2)).update(m2);
+	}
 	
 	@Test public void willAttemptToPersistRejectionOfFriendRequest() 
         throws UserNotFoundException, UserExistsException, NoUserLoggedInException {
 		// make sure that when a logged-in member rejects a friend request, any changes to the affected accounts will be persisted
-		fail();	}
+		when(spyDAO.findByUserName(m1.getUserName())).thenReturn(m1);
+		when(spyDAO.findByUserName(m2.getUserName())).thenReturn(m2);
+		sn.login(m1);
+		sn.sendFriendshipTo(m2.getUserName());
+		sn.login(m2);
+		sn.rejectFriendshipFrom(m1.getUserName());
+		verify(spyDAO, times(2)).update(m1);
+		verify(spyDAO, times(2)).update(m2);
+	}
 	
 	@Test public void willAttemptToPersistBlockingAMember() 
-        throws UserNotFoundException, UserExistsException, NoUserLoggedInException {
+			throws UserNotFoundException, UserExistsException, NoUserLoggedInException {
 		// make sure that when a logged-in member blocks another member, any changes to the affected accounts will be persisted
-		fail();	}
+		when(spyDAO.findByUserName(m1.getUserName())).thenReturn(m1);
+		when(spyDAO.findByUserName(m2.getUserName())).thenReturn(m2);
+		sn.login(m1);
+		sn.block(m2.getUserName());
+		verify(spyDAO).update(m1);
+		verify(spyDAO).update(m2);
+	}
 		
 	@Test public void willAttemptToPersistLeavingSocialNetwork() 
         throws UserExistsException, UserNotFoundException, NoUserLoggedInException {
 		// make sure that when a logged-in member leaves the social network, his account will be permanenlty deleted and  
 		// any changes to the affected accounts will be persisted
-		fail();	
+		when(spyDAO.findByUserName(m1.getUserName())).thenReturn(m1);
+		when(spyDAO.findByUserName(m2.getUserName())).thenReturn(m2);
+		sn.login(m1);
+		sn.sendFriendshipTo(m2.getUserName());
+		sn.login(m2);
+		sn.acceptFriendshipFrom(m1.getUserName());
+		sn.login(m1);
+		sn.leave();
+		verify(spyDAO, times(3)).update(m2);
+		verify(spyDAO, times(2)).update(m1);
+		verify(spyDAO).delete(m1);
 	}
 
 }

@@ -1,18 +1,16 @@
-import org.junit.Test;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.fail;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertEquals;
-
 import java.util.HashSet;
 import java.util.Set;
 
 import org.junit.After;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 import org.junit.Before;
 import org.junit.Test;
+
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 
 public abstract class TestSNAbstractGeneric {
@@ -241,7 +239,7 @@ public abstract class TestSNAbstractGeneric {
 		Account m6 = m2;
 		assertEquals(m2, m6);
 		assertEquals(m2, m2.clone());
-		//assertNotEquals(m1, m2); // assertNotEquals doesn't work in webcat, replace with assertFalse
+		//assertFa(m1, m2); // assertNotEquals doesn't work in webcat, replace with assertFalse
 		assertFalse(m2.equals(m3));
 	}
 	
@@ -264,4 +262,32 @@ public abstract class TestSNAbstractGeneric {
 		assertTrue(clone.getIncomingRequests().contains(m5.getUserName()));
 	}
 
+	@Test
+	public void rejectAllFriendshipsRequiresLogin() throws NoUserLoggedInException {
+	try {
+			sn.rejectAllFriendships();
+			fail();
+		} catch (NoUserLoggedInException e) {
+		} catch (Exception e) {
+			fail();
+		}
+	}
+
+	@Test
+	public void rejectAllFriendshipsWithNoIncomingHasNoEffectsAndUpdatesMe()
+			throws NoUserLoggedInException, UserNotFoundException {
+		sn.login(m1); 
+
+		assertTrue(m1.getIncomingRequests().isEmpty());
+
+		sn.rejectAllFriendships(); 
+
+		if (DAOFactory.isMock(accountDAO)) {
+			verify(accountDAO).update(m1);
+		}
+
+		m1 = sn.login(m1);
+		assertTrue(m1.getIncomingRequests().isEmpty());
+		assertTrue(m1.getFriends().isEmpty());
+	}
 }

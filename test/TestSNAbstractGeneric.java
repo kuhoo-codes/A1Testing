@@ -77,6 +77,8 @@ public abstract class TestSNAbstractGeneric {
 		sn.cancelAutoAcceptFriendships();
 		sn.leave();
 		sn.recommendFriends();
+		sn.rejectAllFriendships();
+		sn.acceptAllFriendships();
 	}
 
 	@Test
@@ -208,7 +210,8 @@ public abstract class TestSNAbstractGeneric {
 	}
 	
 	@Test
-	public void unblockingAMemberMakesUserVisibleToHerInListMembers() throws UserNotFoundException, NoUserLoggedInException {
+	public void unblockingAMemberMakesUserVisibleToHerInListMembers()
+			throws UserNotFoundException, NoUserLoggedInException {
 		sn.login(m2);
 		sn.block(m3.getUserName());
 		sn.login(m3);
@@ -216,6 +219,95 @@ public abstract class TestSNAbstractGeneric {
 		sn.login(m2);
 		sn.unblock(m3.getUserName());
 		assertTrue(sn.hasMember(m2.getUserName()));
+	}
+
+	@Test
+	public void cancelFriendshipRemovesMutualFriendship() 
+			throws NoUserLoggedInException, UserNotFoundException {
+        sn.login(m1);
+        sn.sendFriendshipTo(m2.getUserName());
+        sn.login(m2);
+        sn.acceptFriendshipFrom(m1.getUserName());
+        sn.login(m1);
+		sn.sendFriendshipCancellationTo(m2.getUserName());
+		m1 = sn.login(m1);
+		m2 = sn.login(m2);
+        assertFalse(m1.hasFriend(m2));
+        assertFalse(m2.hasFriend(m1));
+	}
+
+	@Test
+	public void rejectAllFriendshipsWithNoIncomingHasNoEffectsAndUpdatesMe()
+			throws NoUserLoggedInException, UserNotFoundException {
+		sn.login(m1);
+
+		assertTrue(m1.getIncomingRequests().isEmpty());
+
+		sn.rejectAllFriendships();
+
+		if (DAOFactory.isMock(accountDAO)) {
+			verify(accountDAO).update(m1);
+		}
+
+		m1 = sn.login(m1);
+		assertTrue(m1.getIncomingRequests().isEmpty());
+		assertTrue(m1.getFriends().isEmpty());
+	}
+	
+	@Test
+	public void acceptAllFriendshipsWithMultipleIncomingClearsIncomingAndAddsAllFriends() 
+			throws NoUserLoggedInException, UserNotFoundException {
+		sn.login(m2);
+		sn.sendFriendshipTo(m1.getUserName());
+		m3 = sn.login(m3);
+		sn.sendFriendshipTo(m1.getUserName());
+		m1 = sn.login(m1);
+		sn.acceptAllFriendships();
+		assertTrue(m1.getIncomingRequests().isEmpty());
+		assertTrue(m1.hasFriend(m2));
+		assertTrue(m1.hasFriend(m3));
+	}
+	
+	@Test
+	public void autoAcceptFriendshipsWithTwoIncomingAddsTwoFriends() 
+			throws NoUserLoggedInException, UserNotFoundException {
+		sn.login(m1);
+		sn.autoAcceptFriendships();
+		sn.login(m2);
+		sn.sendFriendshipTo(m1.getUserName());
+		sn.login(m3);
+		sn.sendFriendshipTo(m1.getUserName());
+		m1 = sn.login(m1);
+		m2 = sn.login(m2);
+		m3 = sn.login(m3);
+		assertTrue(m1.hasFriend(m2));
+		assertTrue(m2.hasFriend(m1));
+		assertTrue(m1.hasFriend(m3));
+		assertTrue(m3.hasFriend(m1));
+	}
+
+	@Test
+	public void cancelAutoAcceptRetainsIncomingFriendRequest()
+	    throws NoUserLoggedInException, UserNotFoundException {
+		sn.login(m1);
+		sn.autoAcceptFriendships();
+		sn.login(m2);
+		sn.sendFriendshipTo(m1.getUserName());
+		m1 = sn.login(m1);
+		m2 = sn.login(m2);
+		assertTrue(m1.hasFriend(m2));
+		assertTrue(m2.hasFriend(m1));
+		sn.login(m1);
+		sn.cancelAutoAcceptFriendships();
+		sn.login(m3);
+		sn.sendFriendshipTo(m1.getUserName());
+		sn.login(m1);
+		m1 = sn.login(m1);
+		m2 = sn.login(m2);
+		m3 = sn.login(m3);
+		assertTrue(m1.getIncomingRequests().contains(m3.getUserName()));
+		assertFalse(m1.hasFriend(m3));
+		assertFalse(m3.hasFriend(m1));
 	}
 
 	/*
@@ -260,34 +352,5 @@ public abstract class TestSNAbstractGeneric {
 		assertTrue(clone.getOutgoingRequests().contains(m4.getUserName()));
 		assertTrue(clone.blockedMembers().contains(m1.getUserName()));
 		assertTrue(clone.getIncomingRequests().contains(m5.getUserName()));
-	}
-
-	@Test
-	public void rejectAllFriendshipsRequiresLogin() throws NoUserLoggedInException {
-	try {
-			sn.rejectAllFriendships();
-			fail();
-		} catch (NoUserLoggedInException e) {
-		} catch (Exception e) {
-			fail();
-		}
-	}
-
-	@Test
-	public void rejectAllFriendshipsWithNoIncomingHasNoEffectsAndUpdatesMe()
-			throws NoUserLoggedInException, UserNotFoundException {
-		sn.login(m1); 
-
-		assertTrue(m1.getIncomingRequests().isEmpty());
-
-		sn.rejectAllFriendships(); 
-
-		if (DAOFactory.isMock(accountDAO)) {
-			verify(accountDAO).update(m1);
-		}
-
-		m1 = sn.login(m1);
-		assertTrue(m1.getIncomingRequests().isEmpty());
-		assertTrue(m1.getFriends().isEmpty());
 	}
 }

@@ -32,7 +32,7 @@ you used? What differences did you observe in their behavior and their ability t
  - There were a few broken ties in the production and test codes.  
  - Account.requestFriendship compared objects instead of usernames, letting blocked users send requests.
  - SocialNetwork.sendFriendshipTo didn’t persist the recipient after adding an incoming request.
- - SocialNetwork.leave deleted the user but skipped updating all friends, leaving stale data.
+ - SocialNetwork.leave deleted the user but skipped updating all friends.
  - SocialNetwork.rejectFriendshipFrom didn’t update the current user after rejecting a request.
  - SocialNetwork.block failed to update the blocked member’s record.
  - SocialNetwork.rejectAllFriendships and acceptAllFriendships originally skipped updating both sides of each request.
